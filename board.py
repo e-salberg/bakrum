@@ -1,5 +1,4 @@
 import pygame
-from constants import Color
 import constants as const
 
 from pygame.locals import (
@@ -13,8 +12,7 @@ class Board(pygame.sprite.Sprite):
         self.surf.set_colorkey((255, 255, 255), RLEACCEL)
         self.rect = self.surf.get_rect()
 
-        # list of all spots [(x1,y1), (x2,y2) ...]
-        # list of all pieces of board 
+        # maybe remove board class? not sure what it will do 
 
     
 
