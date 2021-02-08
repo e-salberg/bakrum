@@ -103,3 +103,9 @@ class Player(pygame.sprite.Sprite):
     # * maybe this is a public method but the check is at game level
     def addPieceToBoard(self):
         self.pieces.append(Piece(self.color, 0 , 3))
+
+    def isPieceAtLocation(self, row, col):
+        for piece in self.pieces:
+            if row == piece.row and col == piece.col:
+                return True
+        return False

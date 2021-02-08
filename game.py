@@ -92,7 +92,7 @@ def pieceReachedGoal(player):
     return result
 
 def addPieceToBoard(player):
-    if len(player.pieces)  < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score:
+    if len(player.pieces)  < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and not player.isPieceAtLocation(0, 3):
             player.addPieceToBoard()
 
 def scorePoint(player, piece):
