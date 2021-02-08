@@ -101,8 +101,8 @@ class Player(pygame.sprite.Sprite):
     # seems more like a game rule that player doesn't need to know when pieces are added to the board
     # player just needs to keep track of pieces once they are added
     # * maybe this is a public method but the check is at game level
-    def addPieceToBoard(self):
-        self.pieces.append(Piece(self.color, const.PLAYER_SQUARES_SEQUENCE[0]))
+    def addPieceToBoard(self, spaces_to_travel):
+        self.pieces.append(Piece(self.color, const.PLAYER_SQUARES_SEQUENCE[spaces_to_travel]))
 
     def getPieceAtLocation(self, point):
         for piece in self.pieces:
@@ -110,14 +110,16 @@ class Player(pygame.sprite.Sprite):
                 return piece
         return None
 
-    def canPlayerMovePiece(self, piece):
+    def canPlayerMovePiece(self, piece, spaces_to_travel):
         if piece is not None:
             i = const.PLAYER_SQUARES_SEQUENCE.index(piece.xy_cord)
-            p = self.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[i + 1])
-            return not self.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[i + 1])
+            if i + spaces_to_travel < len(const.PLAYER_SQUARES_SEQUENCE):
+                p = self.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[i + spaces_to_travel])
+                return not self.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[i + spaces_to_travel])
         return False
 
-    def movePiece(self, piece):
+    def movePiece(self, piece, spaces_to_travel):
         if piece is not None:
             i = const.PLAYER_SQUARES_SEQUENCE.index(piece.xy_cord)
-            piece.set_location(const.PLAYER_SQUARES_SEQUENCE[i + 1])
+            if i + spaces_to_travel < len(const.PLAYER_SQUARES_SEQUENCE):
+                piece.set_location(const.PLAYER_SQUARES_SEQUENCE[i + spaces_to_travel])

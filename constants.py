@@ -15,11 +15,14 @@ from pygame.locals import (
     QUIT
 )
 
-# Color vector for white
+# RGB value for white
 WHITE = (255, 255, 255)
 
-# Color vector for Black
+# RGB value for Black
 BLACK = (0, 0 , 0)
+
+# RGB value for Blue
+BLUE = (0, 0, 255)
 
 # width of screen 
 SCREEN_WIDTH = 1143
@@ -35,6 +38,15 @@ BOARD_HEIGHT = 437
 
 # total number of pieces a player has
 TOTAL_NUM_OF_PLAYER_PIECES = 7
+
+# min spaces a piece can move in one turn
+MIN_MOVE = 0
+
+# max spaces a piece can move in one turn
+MAX_MOVE = 4
+
+# location of player score
+PLAYER_SCORE_CENTER = (640, 75)
 
 # player one sequence of squares
 PLAYER_SQUARES_SEQUENCE = [(500, 75), (360, 75), (215, 75), (75, 75), (75, 225), (215, 225), (360, 225), (500, 225), (642, 225), (785, 225), (925, 225), (1070, 225), (1070, 75), (925, 75), (780, 75)]
