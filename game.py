@@ -12,6 +12,7 @@ from pygame.locals import (
     K_ESCAPE,
     KEYDOWN,
     K_0,
+    K_RETURN,
     QUIT
 )
 
@@ -55,10 +56,16 @@ def main():
         pressed_keys = pygame.key.get_pressed()
         if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_0):
             addPieceToBoard(p1)
+        if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
+            piece = p1.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[p1.row][p1.col])
+            if p1.canPlayerMovePiece(piece):
+                p1.movePiece(piece)
+
+
         p1.update(pressed_keys, last_pressed_keys)
 
         scoredPiece = pieceReachedGoal(p1)
-        if scoredPiece is not None and scoredPiece is not p1.selected_piece:
+        if scoredPiece is not None: # and scoredPiece is not p1.selected_piece:
             scorePoint(p1, scoredPiece)
             text = font.render(str(p1.score), True, (0, 0, 255))
 
@@ -86,18 +93,19 @@ def main():
 def pieceReachedGoal(player):
     result = None
     for piece in player.pieces:
-        piece_location = const.BOARD_SQUARES_LOCATIONS[piece.row][piece.col]
-        if piece_location[0] == const.PLAYER_SQUARES_SEQUENCE[-1][0] and piece_location[1] == const.PLAYER_SQUARES_SEQUENCE[-1][1]:
+        # piece_location = const.BOARD_SQUARES_LOCATIONS[piece.row][piece.col]
+        if piece.xy_cord[0] == const.PLAYER_SQUARES_SEQUENCE[-1][0] and piece.xy_cord[1] == const.PLAYER_SQUARES_SEQUENCE[-1][1]:
             result = piece
     return result
 
 def addPieceToBoard(player):
-    if len(player.pieces)  < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and not player.isPieceAtLocation(0, 3):
+    if len(player.pieces)  < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and not player.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[0]):
             player.addPieceToBoard()
 
 def scorePoint(player, piece):
     player.score += 1
     player.pieces.remove(piece)
+
 
 # checks if key has been press
 # only returns true when the key has been press after not being pressed 

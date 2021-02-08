@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.col = 0
         self.color = color
         self.pieces = []
-        self.selected_piece = None
+        # self.selected_piece = None
         self.score = 0
         
 
@@ -39,13 +39,13 @@ class Player(pygame.sprite.Sprite):
     def update(self, pressed_keys, last_pressed_keys):
         # always let player cursor move
         self.__move(pressed_keys, last_pressed_keys)
-        for p in self.pieces:
-            if pressed_keys[K_RETURN] and p.row == self.row and p.col == self.col and self.selected_piece is None:
+         # for p in self.pieces:
+            # if pressed_keys[K_RETURN] and p.row == self.row and p.col == self.col and self.selected_piece is None:
                 # select piece at player's current position
-                self.selected_piece = p
-            elif pressed_keys[K_BACKSPACE] and self.selected_piece is not None:
+                # self.selected_piece = p
+            # elif pressed_keys[K_BACKSPACE] and self.selected_piece is not None:
                 # deselect piece at player's current position
-                self.selected_piece = None
+                # self.selected_piece = None
 
         
         
@@ -67,8 +67,8 @@ class Player(pygame.sprite.Sprite):
         self.__avoidOffScreenCursor()
         self.rect.center = const.BOARD_SQUARES_LOCATIONS[self.row][self.col]
         # if there is a piece selected, update it's postion along with the player cursor
-        if self.selected_piece:
-            self.selected_piece.set_location(self.row, self.col)
+        # if self.selected_piece:
+        #    self.selected_piece.set_location(self.row, self.col)
 
     # checks if key has been press
     # only returns true when the key has been press after not being pressed 
@@ -102,10 +102,22 @@ class Player(pygame.sprite.Sprite):
     # player just needs to keep track of pieces once they are added
     # * maybe this is a public method but the check is at game level
     def addPieceToBoard(self):
-        self.pieces.append(Piece(self.color, 0 , 3))
+        self.pieces.append(Piece(self.color, const.PLAYER_SQUARES_SEQUENCE[0]))
 
-    def isPieceAtLocation(self, row, col):
+    def getPieceAtLocation(self, point):
         for piece in self.pieces:
-            if row == piece.row and col == piece.col:
-                return True
+            if piece.xy_cord[0] == point[0] and piece.xy_cord[1] == point[1]:
+                return piece
+        return None
+
+    def canPlayerMovePiece(self, piece):
+        if piece is not None:
+            i = const.PLAYER_SQUARES_SEQUENCE.index(piece.xy_cord)
+            p = self.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[i + 1])
+            return not self.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[i + 1])
         return False
+
+    def movePiece(self, piece):
+        if piece is not None:
+            i = const.PLAYER_SQUARES_SEQUENCE.index(piece.xy_cord)
+            piece.set_location(const.PLAYER_SQUARES_SEQUENCE[i + 1])
