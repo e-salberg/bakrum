@@ -63,7 +63,10 @@ def main():
         pressed_keys = pygame.key.get_pressed()
         if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_0):
             addPieceToBoard(p1, spaces_to_travel)
-        if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
+            # roll dice for new amount to move
+            spaces_to_travel = randint(1, 4)
+            movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
+        elif __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
             piece = p1.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[p1.row][p1.col])
             if spaces_to_travel != 0 and p1.canPlayerMovePiece(piece, spaces_to_travel):
                 p1.movePiece(piece, spaces_to_travel)
@@ -71,11 +74,10 @@ def main():
                 spaces_to_travel = randint(1, 4)
                 movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
 
-
         p1.update(pressed_keys, last_pressed_keys)
 
         scoredPiece = pieceReachedGoal(p1)
-        if scoredPiece is not None: # and scoredPiece is not p1.selected_piece:
+        if scoredPiece is not None:  # and scoredPiece is not p1.selected_piece:
             scorePoint(p1, scoredPiece)
             score_text = font.render(str(p1.score), True, const.BLUE)
 
@@ -110,9 +112,12 @@ def pieceReachedGoal(player):
     return result
 
 # a piece consumes 1 movement to move onto the board
+
+
 def addPieceToBoard(player, spaces_to_travel):
-    if len(player.pieces)  < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and not player.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[spaces_to_travel - 1]):
-            player.addPieceToBoard(spaces_to_travel - 1)
+    if len(player.pieces) < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and not player.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[spaces_to_travel - 1]):
+        player.addPieceToBoard(spaces_to_travel - 1)
+
 
 def scorePoint(player, piece):
     player.score += 1
@@ -120,10 +125,10 @@ def scorePoint(player, piece):
 
 
 # checks if key has been press
-# only returns true when the key has been press after not being pressed 
+# only returns true when the key has been press after not being pressed
 # ie. returns false if key is being held
 def __hasKeyBeenPressed(pressed_keys, last_pressed_keys, key):
-    return pressed_keys[key] and last_pressed_keys[key] != pressed_keys[key]    
+    return pressed_keys[key] and last_pressed_keys[key] != pressed_keys[key]
 
 
 if __name__ == "__main__":
