@@ -123,3 +123,13 @@ class Player(pygame.sprite.Sprite):
             i = const.PLAYER_SQUARES_SEQUENCE.index(piece.xy_cord)
             if i + spaces_to_travel < len(const.PLAYER_SQUARES_SEQUENCE):
                 piece.set_location(const.PLAYER_SQUARES_SEQUENCE[i + spaces_to_travel])
+
+    def hasAtLeastOneValidMove(self, spaces_to_travel):
+        # first check if pieces on board can move
+        for piece in self.pieces:
+            if self.canPlayerMovePiece(piece, spaces_to_travel):
+                return True
+        # if pieces on board can't move then check if player can add a piece to the board
+        if len(self.pieces) < const.TOTAL_NUM_OF_PLAYER_PIECES - self.score and not self.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[spaces_to_travel - 1]):
+            return True
+        return False

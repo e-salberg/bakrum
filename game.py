@@ -67,8 +67,8 @@ def main():
             movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
         elif __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
             piece = p1.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[p1.row][p1.col])
-            if spaces_to_travel == 0:
-                # if roll 0 just end turn if enter key is pressed
+            if spaces_to_travel == 0 or not p1.hasAtLeastOneValidMove(spaces_to_travel):
+                # if roll 0 or player can't move any pieces just end turn if enter key is pressed
                 # roll dice for new amount to move
                 spaces_to_travel = randint(const.MIN_MOVE, const.MAX_MOVE)
                 movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
@@ -116,10 +116,8 @@ def pieceReachedGoal(player):
     return result
 
 # a piece consumes 1 movement to move onto the board
-
-
 def addPieceToBoard(player, spaces_to_travel):
-    if len(player.pieces) < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and not player.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[spaces_to_travel - 1]):
+    if len(player.pieces) < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and spaces_to_travel > 0 and not player.getPieceAtLocation(const.PLAYER_SQUARES_SEQUENCE[spaces_to_travel - 1]):
         player.addPieceToBoard(spaces_to_travel - 1)
 
 
