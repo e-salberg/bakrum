@@ -41,8 +41,7 @@ def main():
     # keep track of keys pressed last frame to prevent keys held down from triggering events
     last_pressed_keys = pygame.key.get_pressed()
 
-    spaces_to_travel = randint(1, 4)
-    movement_text = pygame.font.Font('freesansbold.ttf', 50)
+    spaces_to_travel = randint(const.MIN_MOVE, const.MAX_MOVE)
     movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
     movementTextRect = movement_text.get_rect()
     movementTextRect.center = (640, 365)
@@ -64,14 +63,19 @@ def main():
         if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_0):
             addPieceToBoard(p1, spaces_to_travel)
             # roll dice for new amount to move
-            spaces_to_travel = randint(1, 4)
+            spaces_to_travel = randint(const.MIN_MOVE, const.MAX_MOVE)
             movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
         elif __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
             piece = p1.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[p1.row][p1.col])
-            if spaces_to_travel != 0 and p1.canPlayerMovePiece(piece, spaces_to_travel):
+            if spaces_to_travel == 0:
+                # if roll 0 just end turn if enter key is pressed
+                # roll dice for new amount to move
+                spaces_to_travel = randint(const.MIN_MOVE, const.MAX_MOVE)
+                movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
+            elif p1.canPlayerMovePiece(piece, spaces_to_travel):
                 p1.movePiece(piece, spaces_to_travel)
                 # roll dice for new amount to move
-                spaces_to_travel = randint(1, 4)
+                spaces_to_travel = randint(const.MIN_MOVE, const.MAX_MOVE)
                 movement_text = font.render(str(spaces_to_travel), True, const.BLUE)
 
         p1.update(pressed_keys, last_pressed_keys)
