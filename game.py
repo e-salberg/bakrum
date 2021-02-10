@@ -66,13 +66,13 @@ def main():
                 done = True
 
         if p1_turn:
-            next_roll = updatePlayerTurn(p1, last_pressed_keys, spaces_to_travel)
+            next_roll = updatePlayerTurn(p1, p2, last_pressed_keys, spaces_to_travel)
             if next_roll is not None:
                 p1_turn = not p1_turn
                 spaces_to_travel = next_roll
                 movement_text = font.render(str(next_roll), True, const.BLUE)
         else:
-            next_roll = updatePlayerTurn(p2, last_pressed_keys, spaces_to_travel)
+            next_roll = updatePlayerTurn(p2, p1, last_pressed_keys, spaces_to_travel)
             if next_roll is not None:
                 p1_turn = not p1_turn
                 spaces_to_travel = next_roll
@@ -114,7 +114,7 @@ def main():
     pygame.quit()
 
 
-def updatePlayerTurn(player, last_pressed_keys, spaces_to_travel):
+def updatePlayerTurn(player, other_player, last_pressed_keys, spaces_to_travel):
     # Get all the current pressed keys and process results
         next_roll = None
         pressed_keys = pygame.key.get_pressed()
@@ -131,6 +131,10 @@ def updatePlayerTurn(player, last_pressed_keys, spaces_to_travel):
                 next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
             elif player.canPlayerMovePiece(piece, spaces_to_travel):
                 player.movePiece(piece, spaces_to_travel)
+                # check if piece moved into other player's pieces
+                other_players_piece = other_player.getPieceAtLocation(piece.xy_cord)
+                if other_players_piece is not None:
+                    other_player.pieces.remove(other_players_piece)
                 # roll dice for new amount to move
                 next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
 
