@@ -74,6 +74,7 @@ def main():
         else:
             next_roll = updatePlayerTurn(p2, p1, last_pressed_keys, spaces_to_travel)
             if next_roll is not None:
+                # check if piece moved to special square
                 p1_turn = not p1_turn
                 spaces_to_travel = next_roll
                 movement_text = font.render(str(next_roll), True, const.BLUE)
@@ -83,12 +84,17 @@ def main():
         if scoredPiece is not None:  # and scoredPiece is not p1.selected_piece:
             scorePoint(p1, scoredPiece)
             p1_score_text = font.render(str(p1.score), True, const.P1_MAPPINGS['color'])
+            if p1.score == const.TOTAL_NUM_OF_PLAYER_PIECES:
+                done = True
 
         scoredPiece = pieceReachedGoal(p2)
         if scoredPiece is not None:  # and scoredPiece is not p1.selected_piece:
             scorePoint(p2, scoredPiece)
             p2_score_text = font.render(str(p2.score), True, const.P2_MAPPINGS['color'])
-
+            #if score = total num of player pieces -> end game
+            if p2.score == const.TOTAL_NUM_OF_PLAYER_PIECES:
+                done = True
+        
 
         # fill background with white
         screen.fill((0, 0, 0))

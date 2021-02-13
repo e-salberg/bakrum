@@ -16,6 +16,10 @@ from pygame.locals import (
     QUIT
 )
 
+# TODO - add speical squares
+# 4 pointed star space - player gets another turn
+# 6 pointed star space - player gets another turn??? player's piece on this space can't get removed from the board
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, mappings):
         super(Player, self).__init__()
@@ -42,17 +46,6 @@ class Player(pygame.sprite.Sprite):
     def update(self, pressed_keys, last_pressed_keys):
         # always let player cursor move
         self.__move(pressed_keys, last_pressed_keys)
-         # for p in self.pieces:
-            # if pressed_keys[K_RETURN] and p.row == self.row and p.col == self.col and self.selected_piece is None:
-                # select piece at player's current position
-                # self.selected_piece = p
-            # elif pressed_keys[K_BACKSPACE] and self.selected_piece is not None:
-                # deselect piece at player's current position
-                # self.selected_piece = None
-
-        
-        
-
 
     def __move(self, pressed_keys, last_pressed_keys):
         if self.__hasKeyBeenPressed(pressed_keys, last_pressed_keys, self.keys['down']):
@@ -69,9 +62,6 @@ class Player(pygame.sprite.Sprite):
             self.col -= 1
         self.__avoidOffScreenCursor()
         self.rect.center = const.BOARD_SQUARES_LOCATIONS[self.row][self.col]
-        # if there is a piece selected, update it's postion along with the player cursor
-        # if self.selected_piece:
-        #    self.selected_piece.set_location(self.row, self.col)
 
     # checks if key has been press
     # only returns true when the key has been press after not being pressed 
