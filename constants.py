@@ -77,8 +77,8 @@ BOARD_SQUARES_LOCATIONS = [PLAYER_ONE_SQUARES, SHARED_SQUARES, PLAYER_TWO_SQUARE
 KEEP_TURN_SQUARES = [BOARD_SQUARES_LOCATIONS[0][0], BOARD_SQUARES_LOCATIONS[2][0], BOARD_SQUARES_LOCATIONS[0][6], BOARD_SQUARES_LOCATIONS[2][6]] 
 
 # Player 1 mappings
-P1_MAPPINGS = {'color' : WHITE, 'cursor_color' : OFF_BLACK, 'move_seq' : PLAYER_ONE_SQUARES_SEQUENCE, 'score_center' : (640, 75), 'keys' : {'left' : K_a, 'right' : K_d, 'up' : K_w, 'down' : K_s}}
+P1_MAPPINGS = {'color' : WHITE, 'cursor_color' : OFF_WHITE, 'move_seq' : PLAYER_ONE_SQUARES_SEQUENCE, 'score_center' : (640, 75), 'keys' : {'left' : K_a, 'right' : K_d, 'up' : K_w, 'down' : K_s}}
 
 # Player 2 key mappings
-P2_MAPPINGS = {'color' : BLACK, 'cursor_color' : OFF_WHITE, 'move_seq' : PLAYER_TWO_SQUARES_SEQUENCE, 'score_center' : (780, 75), 'keys' : {'left' : K_a, 'right' : K_d, 'up' : K_w, 'down' : K_s}}
+P2_MAPPINGS = {'color' : BLACK, 'cursor_color' : OFF_BLACK, 'move_seq' : PLAYER_TWO_SQUARES_SEQUENCE, 'score_center' : (780, 75), 'keys' : {'left' : K_a, 'right' : K_d, 'up' : K_w, 'down' : K_s}}
 
