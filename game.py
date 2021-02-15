@@ -24,8 +24,8 @@ def main():
     # draw screen
     screen = pygame.display.set_mode([const.SCREEN_WIDTH, const.SCREEN_HEIGHT])
 
-    p1 = Player(const.P1_MAPPINGS)
-    p2 = Player(const.P2_MAPPINGS)
+    # p1 = Player(const.P1_MAPPINGS)
+    # p2 = Player(const.P2_MAPPINGS)
     brd = Board()
 
     font = pygame.font.Font('freesansbold.ttf', 50)
@@ -66,13 +66,13 @@ def main():
                 done = True
 
         if p1_turn:
-            next_roll = updatePlayerTurn(p1, p2, last_pressed_keys, spaces_to_travel)
+            next_roll = updateBoard(brd, brd.p1, last_pressed_keys, spaces_to_travel)
             if next_roll is not None:
                 p1_turn = not p1_turn
                 spaces_to_travel = next_roll
                 movement_text = font.render(str(next_roll), True, const.BLUE)
         else:
-            next_roll = updatePlayerTurn(p2, p1, last_pressed_keys, spaces_to_travel)
+            next_roll = updateBoard(brd, brd.p2, last_pressed_keys, spaces_to_travel)
             if next_roll is not None:
                 # check if piece moved to special square
                 p1_turn = not p1_turn
@@ -80,31 +80,25 @@ def main():
                 movement_text = font.render(str(next_roll), True, const.BLUE)
 
 
-        scoredPiece = pieceReachedGoal(p1)
+        scoredPiece = pieceReachedGoal(brd)
         if scoredPiece is not None:  # and scoredPiece is not p1.selected_piece:
-            scorePoint(p1, scoredPiece)
-            p1_score_text = font.render(str(p1.score), True, const.P1_MAPPINGS['color'])
-            if p1.score == const.TOTAL_NUM_OF_PLAYER_PIECES:
-                done = True
-
-        scoredPiece = pieceReachedGoal(p2)
-        if scoredPiece is not None:  # and scoredPiece is not p1.selected_piece:
-            scorePoint(p2, scoredPiece)
-            p2_score_text = font.render(str(p2.score), True, const.P2_MAPPINGS['color'])
-            #if score = total num of player pieces -> end game
-            if p2.score == const.TOTAL_NUM_OF_PLAYER_PIECES:
+            scorePoint(brd, scoredPiece)
+            if scoredPiece.playerId == "p1":
+                p1_score_text = font.render(str(brd.p1.score), True, const.P1_MAPPINGS['color'])
+            else: # scoredPiece.playerId == "p2":
+                p2_score_text = font.render(str(brd.p2.score), True, const.P2_MAPPINGS['color'])
+            if brd.p1.score == const.TOTAL_NUM_OF_PLAYER_PIECES or brd.p2.score == const.TOTAL_NUM_OF_PLAYER_PIECES:
                 done = True
         
-
         # fill background with white
         screen.fill((0, 0, 0))
 
         # draw game board
-        brd.draw(screen)
+        brd.draw(screen, p1_turn)
 
         # draw player
-        p1.draw(screen, p1_turn)
-        p2.draw(screen, not p1_turn)
+        # p1.draw(screen, p1_turn)
+        # p2.draw(screen, not p1_turn)
 
         # draw text
         screen.blit(p1_score_text, p1TextRect)
@@ -119,57 +113,62 @@ def main():
 
     pygame.quit()
 
-
-def updatePlayerTurn(player, other_player, last_pressed_keys, spaces_to_travel):
-    # Get all the current pressed keys and process results
-        next_roll = None
-        pressed_keys = pygame.key.get_pressed()
-        if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_0):
-            if addPieceToBoard(player, spaces_to_travel):
-                # roll dice for new amount to move if piece was added to board
-                next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
+def updateBoard(board, currentPlayer, last_pressed_keys, spaces_to_travel):
+    next_roll = None
+    pressed_keys = pygame.key.get_pressed()
+    currentPlayer.update(pressed_keys, last_pressed_keys)
+    if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_0):
+        if addPieceToBoard(board, currentPlayer, spaces_to_travel):
+            # roll dice for new amount to move if piece was added to board
+            next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
                 
-        elif __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
-            piece = player.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[player.row][player.col])
-            if spaces_to_travel == 0 or not player.hasAtLeastOneValidMove(spaces_to_travel):
-                # if roll 0 or player can't move any pieces just end turn if enter key is pressed
-                # roll dice for new amount to move
-                next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
-            elif player.canPlayerMovePiece(piece, spaces_to_travel):
-                player.movePiece(piece, spaces_to_travel)
-                # check if piece moved into other player's pieces
-                other_players_piece = other_player.getPieceAtLocation(piece.xy_cord)
-                if other_players_piece is not None:
-                    other_player.pieces.remove(other_players_piece)
-                # roll dice for new amount to move
-                next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
+    elif __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
+        piece = board.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[currentPlayer.row][currentPlayer.col])
+        if spaces_to_travel == 0 or not board.hasAtLeastOneValidMove(currentPlayer, spaces_to_travel):
+            # if roll 0 or player can't move any pieces just end turn if enter key is pressed
+            # roll dice for new amount to move
+            next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
+        elif board.canPlayerMovePiece(currentPlayer, piece, spaces_to_travel):
+            # pieceAtDestination = board.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[currentPlayer.row][currentPlayer.col])
+            moveSeq = board.getPieceSequenceOfMoves(piece)
+            i = moveSeq.index(piece.xy_cord)
+            opponentPiece = board.getPieceAtLocation(moveSeq[i + spaces_to_travel])
+            if i + spaces_to_travel < len(moveSeq) and opponentPiece is not None and opponentPiece.playerId != currentPlayer.id:
+                board.removePiece(opponentPiece)
+            board.movePiece(piece, spaces_to_travel)
+            # check if piece moved into other player's pieces
+            # other_players_piece = other_player.getPieceAtLocation(piece.xy_cord)
+            # if other_players_piece is not None:
+            #    other_player.pieces.remove(other_players_piece)
+            # roll dice for new amount to move
+            next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
 
-        player.update(pressed_keys, last_pressed_keys)
-        return next_roll
+        currentPlayer.update(pressed_keys, last_pressed_keys)
+    return next_roll 
 
 
 
-def pieceReachedGoal(player):
+def pieceReachedGoal(board):
     result = None
-    for piece in player.pieces:
+    for piece in board.pieces:
         # piece_location = const.BOARD_SQUARES_LOCATIONS[piece.row][piece.col]
-        if piece.xy_cord[0] == player.move_seq[-1][0] and piece.xy_cord[1] == player.move_seq[-1][1]:
+        moveSeq = board.getPieceSequenceOfMoves(piece)
+        if piece.xy_cord[0] == moveSeq[-1][0] and piece.xy_cord[1] == moveSeq[-1][1]:
             result = piece
     return result
 
 # a piece consumes 1 movement to move onto the board
 # return true if a piece was added to board, false otherwise
-def addPieceToBoard(player, spaces_to_travel):
-    if len(player.pieces) < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and spaces_to_travel > 0 and not player.getPieceAtLocation(player.move_seq[spaces_to_travel - 1]):
-        player.addPieceToBoard(spaces_to_travel - 1)
+def addPieceToBoard(board, player, spaces_to_travel):
+    pieceAtLocation = board.getPieceAtLocation(player.moveSeq[spaces_to_travel - 1])
+    if board.numPlayerPiecesOnBoard(player) < const.TOTAL_NUM_OF_PLAYER_PIECES - player.score and spaces_to_travel > 0 and not (pieceAtLocation and pieceAtLocation.playerId == player.id): 
+        board.addPieceToBoard(player, spaces_to_travel - 1)
         return True
     return False
 
 
-def scorePoint(player, piece):
-    player.score += 1
-    player.pieces.remove(piece)
-
+def scorePoint(board, piece):
+    board.scorePoint(piece)
 
 # checks if key has been press
 # only returns true when the key has been press after not being pressed
