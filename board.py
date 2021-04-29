@@ -42,7 +42,8 @@ class Board(pygame.sprite.Sprite):
             i = moveSeq.index(piece.xy_cord)
             if i + spaces_to_travel < len(moveSeq):
                 pAtLocation = self.getPieceAtLocation(moveSeq[i + spaces_to_travel])
-                return not (pAtLocation and pAtLocation.playerId == player.id)
+                canMoveToSafeSaqure = not (pAtLocation and pAtLocation.xy_cord[0] == const.SAFE_SQUARE[0] and pAtLocation.xy_cord[1] == const.SAFE_SQUARE[1])
+                return not (pAtLocation and pAtLocation.playerId == player.id) and canMoveToSafeSaqure
         return False
 
     def hasAtLeastOneValidMove(self, player, spaces_to_travel):
