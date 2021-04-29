@@ -30,17 +30,13 @@ class Player(pygame.sprite.Sprite):
         self.col = 0
         self.color = mappings['color']
         self.keys = mappings['keys']
-        self.move_seq = mappings['move_seq']
-        self.pieces = []
-        # self.selected_piece = None
+        self.moveSeq = mappings['move_seq']
         self.score = 0
-        
+        self.id = mappings['id']
 
     def draw(self, screen, turn):
         if turn:
             screen.blit(self.surf, self.rect)
-        for piece in self.pieces:
-            piece.draw(screen)
         
 
     def update(self, pressed_keys, last_pressed_keys):
@@ -90,39 +86,3 @@ class Player(pygame.sprite.Sprite):
         elif self.col < 0:
             self.col = 0
 
-    # TODO - move this to game level instead of player level?
-    # seems more like a game rule that player doesn't need to know when pieces are added to the board
-    # player just needs to keep track of pieces once they are added
-    # * maybe this is a public method but the check is at game level
-    def addPieceToBoard(self, spaces_to_travel):
-        self.pieces.append(Piece(self.color, self.move_seq[spaces_to_travel]))
-
-    def getPieceAtLocation(self, point):
-        for piece in self.pieces:
-            if piece.xy_cord[0] == point[0] and piece.xy_cord[1] == point[1]:
-                return piece
-        return None
-
-    def canPlayerMovePiece(self, piece, spaces_to_travel):
-        if piece is not None:
-            i = self.move_seq.index(piece.xy_cord)
-            if i + spaces_to_travel < len(self.move_seq):
-                p = self.getPieceAtLocation(self.move_seq[i + spaces_to_travel])
-                return not self.getPieceAtLocation(self.move_seq[i + spaces_to_travel])
-        return False
-
-    def movePiece(self, piece, spaces_to_travel):
-        if piece is not None:
-            i = self.move_seq.index(piece.xy_cord)
-            if i + spaces_to_travel < len(self.move_seq):
-                piece.set_location(self.move_seq[i + spaces_to_travel])
-
-    def hasAtLeastOneValidMove(self, spaces_to_travel):
-        # first check if pieces on board can move
-        for piece in self.pieces:
-            if self.canPlayerMovePiece(piece, spaces_to_travel):
-                return True
-        # if pieces on board can't move then check if player can add a piece to the board
-        if len(self.pieces) < const.TOTAL_NUM_OF_PLAYER_PIECES - self.score and not self.getPieceAtLocation(self.move_seq[spaces_to_travel - 1]):
-            return True
-        return False
