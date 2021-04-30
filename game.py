@@ -69,8 +69,11 @@ def main():
             curr_player = brd.p1
         else: 
             curr_player = brd.p2
-        if updateBoard(brd, curr_player, last_pressed_keys, spaces_to_travel):
-            p1_turn = not p1_turn
+        
+        result = updateBoard(brd, curr_player, last_pressed_keys, spaces_to_travel)
+        if result != "":
+            if result != "newTurnSamePlayer":            
+                p1_turn = not p1_turn
             next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
             spaces_to_travel = next_roll
             movement_text = font.render(str(next_roll), True, const.BLUE)
@@ -108,19 +111,23 @@ def main():
     pygame.quit()
 
 def updateBoard(board, currentPlayer, last_pressed_keys, spaces_to_travel):
+    result = ""
     pressed_keys = pygame.key.get_pressed()
     currentPlayer.update(pressed_keys, last_pressed_keys)
     if __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_0):
         if addPieceToBoard(board, currentPlayer, spaces_to_travel):
             # roll dice for new amount to move if piece was added to board
-            return True #next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
-                
+            result = result + "newTurn"
+            if spaces_to_travel == 4:
+                result = result + "SamePlayer"
     elif __hasKeyBeenPressed(pressed_keys, last_pressed_keys, K_RETURN):
         piece = board.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[currentPlayer.row][currentPlayer.col])
         if spaces_to_travel == 0 or not board.hasAtLeastOneValidMove(currentPlayer, spaces_to_travel):
             # if roll 0 or player can't move any pieces just end turn if enter key is pressed
             # roll dice for new amount to move
-            return True #next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
+            result = result + "newTurn" 
+            if piece is not None and piece.xy_cord in const.KEEP_TURN_SQUARES:
+                result = result + "SamePlayer"
         elif board.canPlayerMovePiece(currentPlayer, piece, spaces_to_travel):
             # pieceAtDestination = board.getPieceAtLocation(const.BOARD_SQUARES_LOCATIONS[currentPlayer.row][currentPlayer.col])
             moveSeq = board.getPieceSequenceOfMoves(piece)
@@ -134,10 +141,12 @@ def updateBoard(board, currentPlayer, last_pressed_keys, spaces_to_travel):
             # if other_players_piece is not None:
             #    other_player.pieces.remove(other_players_piece)
             # roll dice for new amount to move
-            return True #next_roll = randint(const.MIN_MOVE, const.MAX_MOVE)
+            result = result + "newTurn" 
+            if piece.xy_cord in const.KEEP_TURN_SQUARES:
+                result = result + "SamePlayer"
 
         currentPlayer.update(pressed_keys, last_pressed_keys)
-    return False #next_roll 
+    return result 
 
 
 
