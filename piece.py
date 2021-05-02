@@ -1,5 +1,4 @@
 import pygame
-import constants as const
 
 class Piece(pygame.sprite.Sprite):
     def __init__(self, playerId,  color, xy):

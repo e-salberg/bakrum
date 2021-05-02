@@ -16,10 +16,6 @@ from pygame.locals import (
     QUIT
 )
 
-# TODO - add speical squares
-# 4 pointed star space - player gets another turn
-# 6 pointed star space - player gets another turn??? player's piece on this space can't get removed from the board
-
 class Player(pygame.sprite.Sprite):
     def __init__(self, mappings):
         super(Player, self).__init__()
