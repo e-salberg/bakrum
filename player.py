@@ -39,8 +39,13 @@ class Player(pygame.sprite.Sprite):
         # always let player cursor move
         self.__move(pressed_keys, last_pressed_keys)
 
+    def scorePoint(self):
+        self.score += 1
+
     def __move(self, pressed_keys, last_pressed_keys):
+        print(self.keys)
         if self.__hasKeyBeenPressed(pressed_keys, last_pressed_keys, self.keys['down']):
+            print(pressed_keys)
             self.__avoidMovingCursurOffBoard(self.keys['down'])
             self.row += 1     
         if self.__hasKeyBeenPressed(pressed_keys, last_pressed_keys, self.keys['up']):
@@ -59,6 +64,8 @@ class Player(pygame.sprite.Sprite):
     # only returns true when the key has been press after not being pressed 
     # ie. returns false if key is being held
     def __hasKeyBeenPressed(self, pressed_keys, last_pressed_keys, key):
+        print(key)
+        print(pressed_keys[key])
         return pressed_keys[key] and last_pressed_keys[key] != pressed_keys[key]
 
     # adjust for the fact that the board has the 4 grey squares

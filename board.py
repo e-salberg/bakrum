@@ -72,9 +72,9 @@ class Board(pygame.sprite.Sprite):
             
     def scorePoint(self, piece):
         if piece.playerId == self.p1.id:
-           self.p1.score += 1
-        else: # piece.playerId == self.p2.id:
-            self.p2.score += 1
+            self.p1.scorePoint()
+        else: # piece.playerId == self.p2.id
+            self.p2.scorePoint()
         self.pieces.remove(piece)
 
     def draw(self, screen, p1Turn):
