@@ -1,4 +1,9 @@
 # bakrum
+
+## general info
+this project is just for some practice with make a project from skretch and work on implementing an idea and then reflecting on the execution. the game is based on an old board game called Ur.
+
+
 To run:  ```python3 game.py```
 ## Game play
 
